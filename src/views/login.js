@@ -15,7 +15,7 @@ class Login extends React.Component {
     }
 
     prepareCadastrar = () => {
-        this.props.history.push('/cadastro-usuarios')
+        this.props.history.push('/cadastro-usuario')
     }
 
     render() {
