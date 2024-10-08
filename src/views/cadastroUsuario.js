@@ -22,9 +22,9 @@ class CadastroUsuario extends React.Component {
     render() {
         return (
 
-            <Card title="Cadastro de Usuário"><div class="row">
-                <div class="col-lg-12">
-                    <div class="bs-component">
+            <Card title="Cadastro de Usuário"><div className="row">
+                <div className="col-lg-12">
+                    <div className="bs-component">
                         <FormGroup label="Nome: *" htmlFor="inputNome">
                             <input type="text"
                                 id="inputNome"
