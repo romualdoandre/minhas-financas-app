@@ -18,7 +18,7 @@ class ConsultaLancamentos extends React.Component {
 
 
     render() {
-        const lista = [
+        const meses = [
             { label: 'Selecione...', value: '' },
             { label: 'Janeiro', value: 1 },
             { label: 'Fevereiro', value: 2 },
@@ -32,6 +32,12 @@ class ConsultaLancamentos extends React.Component {
             { label: 'Outubro', value: 10 },
             { label: 'Novembro', value: 11 },
             { label: 'Dezembro', value: 12 },
+        ]
+
+        const tipos = [
+            {label: 'Selecione...',value:''},
+            {label: 'Despesa',value:'DESPESA'},
+            {label: 'Receita',value:'RECEITA'}
         ]
         return (
             <Card title="Consulta Lançamentos">
@@ -48,10 +54,11 @@ class ConsultaLancamentos extends React.Component {
                             </FormGroup>
 
                             <FormGroup htmlFor="inputMes" label="Mês: ">
-                                <SelectMenu 
+                                <SelectMenu
+                                    id="inputMes" 
                                     value={this.state.mes}
                                     className="form-control"
-                                    lista={lista}></SelectMenu>
+                                    lista={meses}></SelectMenu>
                             </FormGroup>
 
                             <FormGroup htmlFor="inputDesc" label="Descrição: ">
@@ -64,11 +71,8 @@ class ConsultaLancamentos extends React.Component {
                             </FormGroup>
 
                             <FormGroup htmlFor="inputTipo" label="Tipo Lançamento: ">
-                                <select className="form-control" id="exampleSelect1">
-                                    <option>SELECIONE...</option>
-                                    <option>RECEITA</option>
-                                    <option>DESPESA</option>
-                                </select>
+                                <SelectMenu className="form-control" id="inputTipo" lista={tipos}>
+                                </SelectMenu>
                             </FormGroup>
 
                             <button onClick={this.buscar}
