@@ -1,11 +1,15 @@
 import React from "react"
 import { withRouter } from 'react-router-dom'
 
-import Card from "../components/card"
-import FormGroup from "../components/form-group"
-import SelectMenu from "../components/selectmenu"
+import Card from "../../components/card"
+import FormGroup from "../../components/form-group"
+import SelectMenu from "../../components/selectmenu"
+import LancamentosTable from "./lancamentosTable"
+import LancamentoService from "../../app/service/lancamentoService"
 
-import LocalStorageService from "../app/service/localStorageService"
+import { mensagemErro } from '../../components/toastr'
+
+import LocalStorageService from "../../app/service/localStorageService"
 
 class ConsultaLancamentos extends React.Component {
 
@@ -13,32 +17,42 @@ class ConsultaLancamentos extends React.Component {
         ano: '',
         mes: '',
         descricao: '',
-        tipo: ''
+        tipo: '',
+        status: '',
+        lancamentos: []
     }
 
+    constructor() {
+        super()
+        this.service = new LancamentoService()
+    }
+
+    buscar = () => {
+        if(!this.state.ano){
+            mensagemErro('Campo ano é obrigatório.')
+            return false;
+        }
+
+        const usuarioLogado = LocalStorageService.obterItem('_usuario_logado')
+
+        const lancamentoFiltro = {
+            ano: this.state.ano,
+            mes: this.state.mes,
+            tipo: this.state.tipo,
+            status: this.state.status,
+            usuario: usuarioLogado.id,
+            descricao: this.state.descricao
+        }
+        this.service.consultar(lancamentoFiltro)
+            .then(response => {
+                this.setState({ lancamentos: response.data })
+            })
+            .catch(error => {
+                mensagemErro(error.response.data)
+            })
+    }
 
     render() {
-        const meses = [
-            { label: 'Selecione...', value: '' },
-            { label: 'Janeiro', value: 1 },
-            { label: 'Fevereiro', value: 2 },
-            { label: 'Março', value: 3 },
-            { label: 'Abril', value: 4 },
-            { label: 'Maio', value: 5 },
-            { label: 'Junho', value: 6 },
-            { label: 'Julho', value: 7 },
-            { label: 'Agosto', value: 8 },
-            { label: 'Setembro', value: 9 },
-            { label: 'Outubro', value: 10 },
-            { label: 'Novembro', value: 11 },
-            { label: 'Dezembro', value: 12 },
-        ]
-
-        const tipos = [
-            {label: 'Selecione...',value:''},
-            {label: 'Despesa',value:'DESPESA'},
-            {label: 'Receita',value:'RECEITA'}
-        ]
         return (
             <Card title="Consulta Lançamentos">
                 <div className="row">
@@ -55,10 +69,11 @@ class ConsultaLancamentos extends React.Component {
 
                             <FormGroup htmlFor="inputMes" label="Mês: ">
                                 <SelectMenu
-                                    id="inputMes" 
+                                    id="inputMes"
                                     value={this.state.mes}
                                     className="form-control"
-                                    lista={meses}></SelectMenu>
+                                    lista={this.service.obterListaMeses()}
+                                    onChange={e => this.setState({ mes: e.target.value })}></SelectMenu>
                             </FormGroup>
 
                             <FormGroup htmlFor="inputDesc" label="Descrição: ">
@@ -71,7 +86,8 @@ class ConsultaLancamentos extends React.Component {
                             </FormGroup>
 
                             <FormGroup htmlFor="inputTipo" label="Tipo Lançamento: ">
-                                <SelectMenu className="form-control" id="inputTipo" lista={tipos}>
+                                <SelectMenu className="form-control" id="inputTipo" lista={this.service.obterListaTipos()}
+                                    onChange={e => this.setState({ tipo: e.target.value })}>
                                 </SelectMenu>
                             </FormGroup>
 
@@ -85,6 +101,13 @@ class ConsultaLancamentos extends React.Component {
                                 className="btn btn-danger">
                                 <i className="pi pi-plus"></i> Cadastrar
                             </button>
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-12">
+                        <div className="bs-component">
+                            <LancamentosTable lancamentos={this.state.lancamentos}></LancamentosTable>
                         </div>
                     </div>
                 </div>
